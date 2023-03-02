@@ -1,38 +1,31 @@
-// External imports
 use actix_cors::Cors;
 use actix_web::{http, middleware, App, HttpServer};
-use service::ApiService;
 use dotenv::dotenv;
 use mongodb::{options::ClientOptions, Client};
+use service::ApiService;
 use std::env;
 
-// External modules reference
 mod router;
 mod service;
 
-// Api Service constructor
 pub struct ServiceManager {
     api: ApiService,
 }
 
-// Api Servie Implementation
 impl ServiceManager {
     pub fn new(api: ApiService) -> Self {
         ServiceManager { api }
     }
 }
 
-// Service Manager constructor
 pub struct AppState {
     service_manager: ServiceManager,
 }
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    // init env
     dotenv().ok();
 
-    // init logger middleware
     env::set_var("RUST_LOG", "actix_web=debug,actix_server=info");
     env_logger::init();
 
@@ -68,7 +61,6 @@ async fn main() -> std::io::Result<()> {
             .max_age(3600)
             .finish();
 
-        // Init http server
         App::new()
             .wrap(cors_middleware)
             .wrap(middleware::Logger::default())
